@@ -1,9 +1,11 @@
-# FT8 residual-subtraction decoder
+# SmartZynq HF receiver
 
-This checkout is the `subtract-test` branch of
-[`guido57/ESP32_ft8_lib`](https://github.com/guido57/ESP32_ft8_lib), arranged
-for the SmartZynq Xillinux target. It decodes FT8 and FT4 WAV recordings and
-provides a live FT8 capture program for the receiver's 8 kHz PCM stream.
+This repository contains receiver control and diagnostic scripts in `scripts/`
+and an FT8 residual-subtraction decoder in `ft8_decoder/` for the SmartZynq
+Xillinux target. The decoder is derived from the `subtract-test` branch of
+[`guido57/ESP32_ft8_lib`](https://github.com/guido57/ESP32_ft8_lib). It decodes
+FT8 and FT4 WAV recordings and provides a live FT8 capture program for the
+receiver's 8 kHz PCM stream.
 
 The decoder performs three passes by default: it decodes the original
 waterfall, synthesizes and subtracts every successful FT8 signal, then rebuilds
@@ -11,10 +13,12 @@ the waterfall to recover signals that were masked by stronger transmissions.
 
 ## Xillinux quick start
 
-The checkout lives at `/root/ft8_decoder`.
+The examples assume the repository is checked out at `/root/sz_hf_rx` on
+the Xillinux board. Adjust that prefix if your checkout is elsewhere. Build
+and decoder commands run from the `ft8_decoder/` subdirectory.
 
 ```bash
-cd /root/ft8_decoder
+cd /root/sz_hf_rx/ft8_decoder
 make a9
 ./ft8_decoder tests/20m_busy/test_01.wav -1
 ```
@@ -36,6 +40,7 @@ The receiver supplies mono signed PCM at 8 kHz. Create an equivalent WAV once:
 ```bash
 apt-get update
 apt-get install -y sox
+cd /root/sz_hf_rx/ft8_decoder
 sox tests/20m_busy/test_01.wav -r 8000 -c 1 -b 16 test_01_8k.wav
 soxi test_01_8k.wav
 ./ft8_decoder test_01_8k.wav -1
@@ -49,7 +54,7 @@ this resampled recording decodes all 27 messages in about 2.45 seconds. The Cort
 Build the capture program:
 
 ```bash
-cd /root/ft8_decoder
+cd /root/sz_hf_rx/ft8_decoder
 make stream
 ```
 
@@ -72,6 +77,8 @@ channel.
 
 ## Build commands
 
+Run these commands from `ft8_decoder/`, which contains the Makefile.
+
 | Command | Result |
 | --- | --- |
 | `make` | Native host `ft8_decoder` build using the local compiler defaults. |
@@ -82,24 +89,33 @@ channel.
 
 ## Layout
 
+Paths below are relative to the repository root:
+
 ```text
-src/ft8/                 FT8 protocol, LDPC, packing and message code
-src/fft/                 KissFFT implementation
-src/decode_ft8.cpp       Waterfall search, decode passes and subtraction loop
-src/subtract.cpp         FT8 waveform synthesis and residual cancellation
-src/decoder_api.cpp      Slot and streaming decoder API
-src/main.cpp             Native WAV-file command-line application
-src/ft8_subtract_stream.cpp
-                          SmartZynq live PCM capture application
-tests/                   Reference WAV recordings
+README.md                         Project documentation
+scripts/                          Receiver control, capture and diagnostics
+  receiver_control.py             DDC receiver controls
+  ft8_control.py                  FT8 tone upload through Xillybus
+  decode_ft8mon.py                WAV decoding with external FT8MON processes
+ft8_decoder/
+  Makefile                        Native and Cortex-A9 build targets
+  LICENSE                         Decoder license
+  src/ft8/                        FT8 protocol, LDPC, packing and message code
+  src/fft/                        KissFFT implementation
+  src/decode_ft8.cpp              Waterfall search, decode passes and subtraction
+  src/subtract.cpp                FT8 waveform synthesis and residual cancellation
+  src/decoder_api.cpp             Slot and streaming decoder API
+  src/main.cpp                    Native WAV-file command-line application
+  src/ft8_subtract_stream.cpp      SmartZynq live PCM capture application
+  tests/                          Reference WAV recordings
+  build/                          Generated build output
 ```
 
 ## ESP32 and PlatformIO
 
-The same core also remains usable with PlatformIO. The project configuration
-is in `platformio.ini`; the native and ESP32-S3 environments can be built with
-`pio run --environment native` and `pio run --environment esp32s3` when
-PlatformIO is installed.
+The decoder originates from an ESP32/PlatformIO project. This repository does
+not currently include a `platformio.ini`; the build instructions above use
+`ft8_decoder/Makefile`.
 
 ## Credits
 
