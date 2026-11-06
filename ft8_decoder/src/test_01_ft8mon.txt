@@ -1,0 +1,29 @@
+freq      SNR   time_delay    message                         pass
+337.88    -9    1.305         JO1COV PE1OYB JO21              1
+559.30    -8    1.340         OE3MLC G3ZQQ 73                 1
+708.41    +5    1.380         CQ IK4LZH JN54                  1     
+718.74   -12    2.430         <...22> SQ9JJR JO90             2     
+771.44   -10    2.405         JA1FWS OK2BV JN89               1
+772.99    -4    1.455         JA1FWS HA7CH JN97               2     
+823.40     0    1.400         LY2EW DL1KDA RR73               1
+891.77   +13    1.260         SA5QED IQ5PJ 73                 1     
+946.97   -18    1.320         <...22> E77VM R-11              2
+955.05    -7    1.120         CQ IU8DMZ JN70                  1
+1088.36  -11    1.380         CQ R7NO KN98                    2
+1123.32    0    1.345         CQ HB9CUZ JN47                  1
+1157.59  -11    1.325         CQ HA1BF JN86                   2     
+1284.78  -13    0.610         MM0IMC 4U1A -06                 2     
+1291.36    0    1.545         EA9ACD HA5LGO -13               1     
+1344.83   -9    0.610         CQ 4U1A JN88                    2     
+1368.95   +1    1.285         CQ OK6LZ JN99                   1     
+1449.44  -13    2.250         CQ RX3ASQ KO95                  1
+1512.37   +3    1.330         JO1COV DL4SBF 73                1
+1564.32    0    1.540         JI1TYA DH1NAS 73                1
+1614.83  -14    1.200         JO1COV PA0CAH JO21              1
+2104.02  -11    1.320         F1BHB SP4TXI 73                 2     
+2138.13   +3    1.330         LZ365BM <...12> 73              1
+2278.70   +4    1.660         PY2DPM ON6UF RR73               1
+2326.60   +4    1.300         CQ R8AU MO05                    1     
+2389.31  -11    2.185         CQ E75C JN93                    1
+2631.49   -1    1.295         CQ OR18OSB                      1
+2691.92   -5    1.235         CQ OE8GMQ JN66                  1
