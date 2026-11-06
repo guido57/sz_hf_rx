@@ -87,6 +87,41 @@ Run these commands from `ft8_decoder/`, which contains the Makefile.
 | `make clean` | Remove the native decoder build and executable. |
 | `make stream-clean` | Remove the live-stream build. |
 
+## Python receiver tools
+
+Run these scripts with `python3` on Xillinux. Hardware tools require the
+matching FPGA bitstream and Xillybus endpoints. Keep `receiver_control.py`
+beside the scripts that import it. The board currently has Python 3.5,
+NumPy 1.11, Matplotlib 1.5 and Tkinter.
+
+| Script in `scripts/` | Purpose and requirements | Recommendation |
+| --- | --- | --- |
+| `receiver_control.py` | Read/set DDC source, mode, tuning and simulator frequency through `/dev/xillybus_mem_8`. USB/LSB needs the SSB bitstream. Shared helper imported by the monitor, audio recorder and FT8 uploader. | Keep. |
+| `adc_monitor.py` | Plot raw ADC, IQ or audio snapshots, or CSV input. Requires NumPy and Matplotlib, plus Tkinter for interactive frequency dialogs. `--save` produces headless output. Imports `receiver_control.py`. | Keep for signal inspection. |
+| `capture_ssb_audio.py` | Record continuous 8 kHz mono PCM16 from `/dev/xillybus_read_8` to WAV; configure USB/LSB and check overflow. Requires the SSB bitstream and `receiver_control.py`. | Keep for recordings and decoder tests. |
+| `ft8_control.py` | Upload 79 FT8 tones to the FPGA simulator through the control window. Requires the FT8-upload-capable bitstream and `receiver_control.py`. This does not decode FT8. | Optional; keep for simulator tests. |
+| `jtag_lifecycle.py` | Inspect drivers, detach before live JTAG programming, then rebind and rearm HDMI. Uses root privileges and board-specific registers. Run prepare/finish from an interactive UART console, not SSH; Ethernet is interrupted. | Keep for live JTAG programming. |
+
+Examples (the monitor and recording commands change receiver settings):
+
+```bash
+cd /root/sz_hf_rx
+# Read current receiver settings.
+python3 scripts/receiver_control.py
+# Save a simulated raw ADC snapshot without a GUI.
+python3 scripts/adc_monitor.py --receiver --source simulated --mode raw --save /root/adc-raw.png
+# Record five seconds of USB audio from the external ADC.
+python3 scripts/capture_ssb_audio.py /root/usb.wav --source external --mode usb --tune 1000000 --seconds 5
+# Status is read-only; prepare/finish require an interactive UART console.
+python3 scripts/jtag_lifecycle.py status
+```
+
+For normal receiver inspection and recording, the core Python tools are
+`receiver_control.py`, `adc_monitor.py` and `capture_ssb_audio.py`.
+The live FT8 capture executable runs independently of these Python scripts
+once the FPGA receiver has been configured. `ft8_control.py` supports FPGA
+simulator tests, and `jtag_lifecycle.py` supports live JTAG programming.
+
 ## Layout
 
 Paths below are relative to the repository root:
@@ -94,9 +129,11 @@ Paths below are relative to the repository root:
 ```text
 README.md                         Project documentation
 scripts/                          Receiver control, capture and diagnostics
-  receiver_control.py             DDC receiver controls
-  ft8_control.py                  FT8 tone upload through Xillybus
-  decode_ft8mon.py                WAV decoding with external FT8MON processes
+  receiver_control.py             DDC/SSB controls and shared Python helpers
+  adc_monitor.py                  ADC/IQ/audio snapshot plots
+  capture_ssb_audio.py            Continuous PCM16 WAV recording
+  ft8_control.py                  FPGA simulator FT8 tone upload
+  jtag_lifecycle.py               Current live-JTAG driver and HDMI lifecycle
 ft8_decoder/
   Makefile                        Native and Cortex-A9 build targets
   LICENSE                         Decoder license

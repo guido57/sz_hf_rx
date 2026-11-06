@@ -303,7 +303,7 @@ def main():
  def redraw_widget(ax):
   if plot.blit:fig.draw_artist(ax);fig.canvas.blit(ax.bbox)
   else:fig.canvas.draw_idle()
- 
+
  switching=controller is not None and not a.save and not a.once
  fig.subplots_adjust(hspace=.65,top=.84,bottom=.25 if switching and receiver else (.20 if switching else .07))
  if switching:
