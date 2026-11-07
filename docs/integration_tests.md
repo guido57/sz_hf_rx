@@ -5,6 +5,16 @@ PL RF simulation, DDC/SSB demodulation, Xillybus PCM transport and PS decoding.
 For preliminary transport checks see [hardware validation](hardware_validation.md).
 For final off-air use see [receiver operation](receiver.md).
 
+## Signal path
+
+![Internal FT8 test: PS tone upload, FPGA generator and DDC/USB demodulation, Xillybus PCM stream, and Cortex-A9 decoder](images/hackaday-ft8-simulated-stream-diagram.png)
+
+The diagram shows the validated signal path using the original 1 MHz tuning
+and 1 kHz audio example. The commands below use 14.074 MHz tuning and a
+1.5 kHz audio offset. Its timing annotation describes the earlier manual
++0.75-second test; the current `ft8_control.py` automatically commits at the
+UTC slot boundary **+0.5 seconds**, so no separate timing code is needed.
+
 ## Required hardware and software
 
 Use the single-channel `hf_ssb_receiver` PL project with SSB marker `0xd3`

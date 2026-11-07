@@ -118,6 +118,18 @@ The complete commands, expected result and troubleshooting live in
 board first using [hardware validation](docs/hardware_validation.md).
 For final external reception see [receiver operation](docs/receiver.md).
 
+## Automated software tests
+
+See [tests/README.md](tests/README.md) for dependencies and the separate Tk
+GUI check. Run the hardware-mocked unit tests from this repository root:
+
+```bash
+MPLBACKEND=Agg python3 -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+Real-board checks remain in [hardware validation](docs/hardware_validation.md)
+and [integration tests](docs/integration_tests.md).
+
 ## Build commands
 
 Run these commands from `ft8_decoder/`, which contains the Makefile.
