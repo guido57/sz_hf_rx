@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Upload 79 FT8 tones through the PS Xillybus control window (Python 3.5+)."""
+"""Upload 79 FT8 tones; commit at the next UTC slot boundary + 0.5 s (Python 3.5+)."""
 import argparse
 import os
 import time
@@ -17,26 +17,38 @@ def upload(tones, device='/dev/xillybus_mem_8', timeout=10):
     payload = pack_tones(tones)
     with deadline(timeout):
         fd = os.open(device, os.O_RDWR)
-        try:
-            def read(offset):
-                os.lseek(fd,offset,os.SEEK_SET)
-                value=os.read(fd,1)
-                if len(value)!=1: raise RuntimeError('Short control read')
-                return value[0]
-            def write(offset,value):
-                os.lseek(fd,offset,os.SEEK_SET)
-                if os.write(fd,bytes(bytearray([value])))!=1: raise RuntimeError('Short control write')
+    try:
+        def read(offset):
+            os.lseek(fd,offset,os.SEEK_SET)
+            value=os.read(fd,1)
+            if len(value)!=1: raise RuntimeError('Short control read')
+            return value[0]
+        def write(offset,value):
+            os.lseek(fd,offset,os.SEEK_SET)
+            if os.write(fd,bytes(bytearray([value])))!=1: raise RuntimeError('Short control write')
+        with deadline(timeout):
             if read(20)!=0xf8: raise RuntimeError('PS FT8 upload requires the new bitstream')
             while read(19) not in (0,3): time.sleep(.01)
             for index,value in enumerate(payload):
                 write(17,index);write(18,value)
                 if read(18)!=value: raise RuntimeError('FT8 byte readback mismatch')
+        # Stage all tones before choosing a slot, so upload latency cannot
+        # move the transmission start past its intended UTC boundary.
+        target = (int(time.time()) // 15 + 1) * 15 + 0.5
+        print('Tones verified; waiting to commit at UTC %s.500' %
+              time.strftime('%H:%M:%S', time.gmtime(target)), flush=True)
+        while True:
+            remaining = target - time.time()
+            if remaining <= 0: break
+            time.sleep(min(remaining, 0.1))
+        # The scheduled wait is outside the hardware I/O timeout.
+        with deadline(timeout):
             previous=read(19)&1
             write(19,1)
             expected=3 if previous==0 else 0
             while read(19)!=expected: time.sleep(.01)
-        finally:
-            os.close(fd)
+    finally:
+        os.close(fd)
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)

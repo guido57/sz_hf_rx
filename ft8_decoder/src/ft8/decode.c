@@ -203,7 +203,7 @@ static inline __attribute__((always_inline)) int ft8_sync_score_optimized(const 
             int block = (FT8_SYNC_OFFSET * m) + k;
             int block_abs = time_offset + block;
 
-            // Rimosso il controllo (block_abs < 0) perché time_offset parte da 5
+            // time_offset is nonnegative, so block_abs cannot be negative.
             if (block_abs >= num_blocks) break;
 
             const uint8_t* p8 = mag_cand + (block * block_stride);
@@ -244,7 +244,7 @@ __attribute__((section(".iram1.text"))) int ft8_find_sync(const waterfall_t* wf,
     {
         for (candidate.freq_sub = 0; candidate.freq_sub < wf->freq_osr; ++candidate.freq_sub)
         {
-            for (candidate.time_offset = 5; candidate.time_offset < 20; ++candidate.time_offset)
+            for (candidate.time_offset = 0; candidate.time_offset < 20; ++candidate.time_offset)
             {
                 if (is_ft4)
                 {
@@ -367,7 +367,7 @@ int ft8_find_sync_ori(const waterfall_t* wf, int num_candidates, candidate_t hea
     // Here we allow time offsets that exceed signal boundaries, as long as we still have all data bits.
     // I.e. we can afford to skip the first 7 or the last 7 Costas symbols, as long as we track how many
     // sync symbols we included in the score, so the score is averaged.
-    for (candidate.time_offset = 5; candidate.time_offset < 20; ++candidate.time_offset)
+    for (candidate.time_offset = 0; candidate.time_offset < 20; ++candidate.time_offset)
     {
         for (candidate.time_sub = 0; candidate.time_sub < wf->time_osr; ++candidate.time_sub)
         {
