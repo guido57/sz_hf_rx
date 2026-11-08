@@ -24,6 +24,18 @@ RTL, Vivado projects, constraints, bitstream preparation and programming.
 - [PS–PL interface contract](https://github.com/guido57/SmartZynq_SP2_HF_receiver/blob/master/docs/ps_pl_interface.md)
 - [PL build and deployment](https://github.com/guido57/SmartZynq_SP2_HF_receiver/blob/master/docs/deployment.md)
 
+## Boot-tested SD image and live capture
+
+[Download v3 (2026-11-08)](https://github.com/guido57/SmartZynq_SP2_HF_receiver/releases/tag/sd-image-v3-2026-11-08)
+and follow [flash, login and first-use instructions](docs/sd_image.md).
+HDMI/LXDE, SSH and VNC start automatically. SSH user/password: **root/root**;
+VNC password: **root**, port **5900**. The owner confirmed v3 boots and works
+as requested on the SmartZynq SP2 V1.3B.
+
+Open **SmartZynq FT8 Demo**, or run `sz-hf-rx` on the board. It configures and
+runs the aligned internal FT8 capture automatically; no antenna is needed.
+See [remote-access startup](docs/remote_access.md) for service management.
+
 ## Xillinux quick start
 
 The examples assume the repository is checked out at `/root/sz_hf_rx` on
@@ -155,6 +167,10 @@ NumPy 1.11, Matplotlib 1.5 and Tkinter.
 | `adc_monitor.py` | Plot raw ADC, IQ or audio snapshots, or CSV input. Requires NumPy and Matplotlib, plus Tkinter for interactive frequency dialogs. `--save` produces headless output. Imports `receiver_control.py`. | Keep for signal inspection. |
 | `capture_ssb_audio.py` | Record continuous 8 kHz mono PCM16 from `/dev/xillybus_read_8` to WAV; configure USB/LSB and check overflow. Requires the SSB bitstream and `receiver_control.py`. | Keep for recordings and decoder tests. |
 | `ft8_control.py` | Upload 79 FT8 tones to the FPGA simulator through the control window; commit automatically at the next UTC slot boundary + 0.5 seconds. Requires the FT8-upload-capable bitstream and `receiver_control.py`. This does not decode FT8. | Optional; keep for simulator tests. |
+| `live_capture.py` | One-command internal demo or external receiver, exposed as `sz-hf-rx`; selects USB mode, aligns simulator tones and bounds capture time. | SD-image entry point. |
+| `install_sd.py` | Builds the stream decoder and installs the command plus desktop shortcuts on an existing card. | Setup tool. |
+| `firstboot.py` | Installs verified offline VNC packages and initializes credentials, preserving v3 preset authentication files. | Automatic startup preparation. |
+| `install_remote_access.py` | Provisions public SSH keys and enables desktop/VNC service units; supports offline image staging. | Startup installer. |
 | `jtag_lifecycle.py` | Inspect drivers, detach before live JTAG programming, then rebind and rearm HDMI. Uses root privileges and board-specific registers. Run prepare/finish from an interactive UART console, not SSH; Ethernet is interrupted. | Keep for live JTAG programming. |
 
 Examples (the monitor and recording commands change receiver settings):

@@ -1,0 +1,15 @@
+[Unit]
+Description=SmartZynq authenticated VNC desktop
+After=sz-hf-rx-desktop.service
+Requires=sz-hf-rx-desktop.service
+
+[Service]
+Type=simple
+User=root
+Environment=HOME=/root
+ExecStart=/usr/bin/x11vnc -display :0 -auth /root/.Xauthority -rfbauth /root/.vnc/passwd -listen 0.0.0.0 -rfbport 5900 -forever -shared -noxdamage
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

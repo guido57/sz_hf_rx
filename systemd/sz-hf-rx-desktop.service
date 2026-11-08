@@ -1,0 +1,22 @@
+[Unit]
+Description=SmartZynq HDMI LXDE desktop
+After=systemd-user-sessions.service dbus.service sz-hf-rx-firstboot.service
+Requires=sz-hf-rx-firstboot.service
+Conflicts=display-manager.service getty@tty7.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+Environment=HOME=/root USER=root LOGNAME=root
+ExecStart=/usr/bin/startx /usr/bin/startlxde -- :0 vt7 -nolisten tcp
+Restart=on-failure
+RestartSec=5
+StandardInput=tty
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+PAMName=login
+
+[Install]
+WantedBy=multi-user.target

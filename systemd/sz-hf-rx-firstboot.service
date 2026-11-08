@@ -1,0 +1,13 @@
+[Unit]
+Description=Prepare SmartZynq remote access
+After=local-fs.target
+Before=sz-hf-rx-desktop.service sz-hf-rx-vnc.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /root/sz_hf_rx/scripts/firstboot.py
+RemainAfterExit=yes
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target
