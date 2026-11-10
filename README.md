@@ -11,31 +11,6 @@ The decoder performs three passes by default: it decodes the original
 waterfall, synthesizes and subtracts every successful FT8 signal, then rebuilds
 the waterfall to recover signals that were masked by stronger transmissions.
 
-## Documentation and repository boundary
-
-This repository owns Xillinux software, receiver utilities, decoder builds,
-board-validation procedures, integration tests and final receiver operation.
-The [PL repository](https://github.com/guido57/SmartZynq_SP2_HF_receiver) owns
-RTL, Vivado projects, constraints, bitstream preparation and programming.
-
-- [Preliminary PL–PS hardware validation](docs/hardware_validation.md)
-- [Complete internal FT8 integration test](docs/integration_tests.md)
-- [Receiver operation and external FT8 reception](docs/receiver.md)
-- [PS–PL interface contract](https://github.com/guido57/SmartZynq_SP2_HF_receiver/blob/master/docs/ps_pl_interface.md)
-- [PL build and deployment](https://github.com/guido57/SmartZynq_SP2_HF_receiver/blob/master/docs/deployment.md)
-
-## Boot-tested SD image and live capture
-
-[Download v3 (2026-11-08)](https://github.com/guido57/SmartZynq_SP2_HF_receiver/releases/tag/sd-image-v3-2026-11-08)
-and follow [flash, login and first-use instructions](docs/sd_image.md).
-HDMI/LXDE, SSH and VNC start automatically. SSH user/password: **root/root**;
-VNC password: **root**, port **5900**. The owner confirmed v3 boots and works
-as requested on the SmartZynq SP2 V1.3B.
-
-Open **SmartZynq FT8 Demo**, or run `sz-hf-rx` on the board. It configures and
-runs the aligned internal FT8 capture automatically; no antenna is needed.
-See [remote-access startup](docs/remote_access.md) for service management.
-
 ## Xillinux quick start
 
 The examples assume the repository is checked out at `/root/sz_hf_rx` on
@@ -120,15 +95,6 @@ soxi test_01_8k.wav
 `soxi` must report an 8000 Hz, one-channel, 16-bit PCM WAV. On the Cortex-A9,
 this resampled recording decodes all 27 messages in about 2.45 seconds.
 
-
-## Internal FT8 integration test
-
-The test has three steps: upload FT8 tones (automatically aligned to UTC slot
-+0.5 seconds), set the simulated source/mode/frequencies, and run the decoder.
-The complete commands, expected result and troubleshooting live in
-[Integration tests](docs/integration_tests.md). Validate a newly programmed
-board first using [hardware validation](docs/hardware_validation.md).
-For final external reception see [receiver operation](docs/receiver.md).
 
 ## Automated software tests
 
